@@ -8,7 +8,7 @@ app.use(express.urlencoded({ limit: "10kb", extended: true }));
 app.use(express.static("public"));
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "https://tasksly-task-manager.onrender.com/tasks",
     credentials: true,
   })
 );
