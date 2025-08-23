@@ -1,4 +1,4 @@
-# Tasksly - Task Manager Site
+# Tasksly - Task Manager Site (Frontend)
 
 ## Overview
 
@@ -12,17 +12,7 @@ This is a Task Manager Web built with React, Tailwind CSS, and Material-UI. The 
 
 ## Tech Stack
 
-- Backend: Node.js, Express
-- Database: MongoDB
 - Frontend: React, MUI (Material UI), Tailwind CSS, Lucide React, dayjs, axios
 - Routing: React Router Dom
 - State Management: Zustand
 - Deployment: Vercel
-
-## Live Page
-
-live-page-link:
-
-## License
-
-This project is licensed under the MIT License.
