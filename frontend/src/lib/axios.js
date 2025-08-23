@@ -1,6 +1,6 @@
 import axios from "axios";
 
 export const axiosInstance = axios.create({
-  baseURL: "http://localhost:5001/api/tasks",
+  baseURL: "https://tasksly-task-manager-backend.onrender.com/api/tasks",
   withCredentials: true,
 });
