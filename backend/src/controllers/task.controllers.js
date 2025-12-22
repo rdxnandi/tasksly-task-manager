@@ -1,66 +1,55 @@
 import { Task } from "../models/task.models.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import { ApiError } from "../utils/ApiError.js";
 
-const createTask = async (req, res) => {
-  try {
-    const task = await Task.create(req.body);
+const createTask = asyncHandler(async (req, res) => {
+  const { title, description } = req.body;
 
-    res.status(201).json(task);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
+  const task = await Task.create({ title, description });
 
-const getTasks = async (req, res) => {
-  try {
-    const task = await Task.find().sort({ createdAt: -1 });
+  res.status(201).json(new ApiResponse(201, task, "Task Create Successfully"));
+});
 
-    res.json(task);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
+const getTasks = asyncHandler(async (req, res) => {
+  const task = await Task.find().sort({ createdAt: -1 });
 
-const updateTask = async (req, res) => {
-  try {
-    const { title } = req.body;
+  res
+    .status(200)
+    .json(new ApiResponse(200, task, "Current Tasks Fetched Successfully"));
+});
 
-    const task = await Task.findByIdAndUpdate(
-      req.params.id,
-      { title },
-      {
-        new: true,
-      }
-    );
-    res.json(task);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
+const updateTask = asyncHandler(async (req, res) => {
+  const { title } = req.body;
 
-const toggleStatus = async (req, res) => {
-  try {
-    const task = await Task.findById(req.params.id);
-
-    if (task.status === "Pending") {
-      task.status = "Completed";
-    } else {
-      task.status = "Pending";
+  const task = await Task.findByIdAndUpdate(
+    req.params.id,
+    { title },
+    {
+      new: true,
     }
-    await task.save();
-    res.json(task);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
+  );
+  res.status(200).json(new ApiResponse(200, task, "Updated Task Successfully"));
+});
 
-const deleteTask = async (req, res) => {
-  try {
-    await Task.findByIdAndDelete(req.params.id);
+const toggleStatus = asyncHandler(async (req, res) => {
+  const task = await Task.findById(req.params.id);
 
-    res.json({ message: "Task deleted" });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+  if (task.status === "Pending") {
+    task.status = "Completed";
+  } else {
+    task.status = "Pending";
   }
-};
+  await task.save();
+  res
+    .status(200)
+    .json(new ApiResponse(200, task, "Toggle Status Successfully"));
+});
+
+const deleteTask = asyncHandler(async (req, res) => {
+  await Task.findByIdAndDelete(req.params.id);
+
+  res.status(200).json(new ApiResponse(200, {}, "Task deleted"));
+});
 
 export { createTask, getTasks, updateTask, toggleStatus, deleteTask };

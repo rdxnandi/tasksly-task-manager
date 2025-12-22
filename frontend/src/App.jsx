@@ -1,16 +1,18 @@
 import { Routes, Route } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import Tasks from "./pages/Tasks";
-import { Login, Register } from "./components";
+import RegisterPage from "./pages/Register";
+import LoginPage from "./pages/Login";
 
 function App() {
   return (
     <>
-      {/* <Routes>
+      <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/tasks" element={<Tasks />} />
-      </Routes> */}
-      <Login />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/login" element={<LoginPage />} />
+      </Routes>
     </>
   );
 }

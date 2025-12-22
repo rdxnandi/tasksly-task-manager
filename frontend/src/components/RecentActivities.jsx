@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTaskStore } from "../store/useTaskStore.js";
 
-function RecentActivities() {
+export default function RecentActivities() {
   const recentActivities = useTaskStore((state) => state.recentActivities);
   const deleteActivities = useTaskStore((state) => state.deleteRecentActivity);
   const tasks = useTaskStore((state) => state.tasks);
@@ -71,5 +71,3 @@ function RecentActivities() {
     </div>
   );
 }
-
-export default RecentActivities;

@@ -1,15 +1,27 @@
 import { useEffect, useState } from "react";
 import { Layout } from "../components";
-import { Pencil, Trash } from "lucide-react";
+import { Pencil, Plus, Trash } from "lucide-react";
 import { useTaskStore } from "../store/useTaskStore.js";
 import { formatMessageDate, formatMessageTime } from "../lib/utils.js";
 
 function Tasks() {
-  const [newTask, setNewTask] = useState("");
+  const [expanded, setExpanded] = useState({});
+
+  const [openTaskInput, setOpenTaskInput] = useState(false);
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+  });
   const [error, setError] = useState("");
 
   const { tasks, addTask, deleteTask, fetchTasks, toggleStatus } =
     useTaskStore();
+
+  const toggle = (id) => setExpanded((s) => ({ ...s, [id]: !s[id] }));
+
+  const handleTask = () => {
+    setOpenTaskInput(!openTaskInput);
+  };
 
   useEffect(() => {
     fetchTasks();
@@ -17,60 +29,106 @@ function Tasks() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!newTask) {
-      setError("Task title cannot be blank");
-      return;
-    }
-    addTask(newTask);
-    setNewTask("");
+    // if (!newTask) {
+    //   setError("Task title cannot be blank");
+    //   return;
+    // }
+    addTask(formData);
+    setFormData({ title: "", description: "" });
     setError("");
   };
 
   return (
     <Layout>
       <div className="p-4">
-        <form
-          onSubmit={handleSubmit}
-          className="flex lg:flex-row flex-col gap-3 justify-center mt-6 lg:h-[40px]"
+        <button
+          type="button"
+          onClick={handleTask}
+          className="border border-green-500 text-green-500 px-5 py-2 rounded-md flex items-center gap-2 tracking-wider cursor-pointer focus:outline-none"
         >
-          <div className="flex flex-col gap-2">
-            <input
-              type="text"
-              value={newTask}
-              onChange={(e) => {
-                setNewTask(e.target.value);
-                if (error) setError("");
-              }}
-              className="p-2 flex rounded border border-gray-400 lg:w-[400px] focus:outline-green-500"
-              placeholder="Add a new task"
-            />
-            {error && (
-              <p className="text-red-500 text-sm text-center">{error}</p>
-            )}
-          </div>
+          <Plus size={18} />
+          Add New Task
+        </button>
 
-          <button
-            type="submit"
-            className="lg:ml-2 px-5 py-2 lg:py-0 m-auto lg:m-0 bg-green-400 hover:bg-green-500 text-white rounded cursor-pointer focus:outline-none"
+        {openTaskInput && (
+          <div
+            onClick={() => setOpenTaskInput(false)}
+            className="fixed inset-0 bg-zinc-800/50 flex items-center justify-center z-100"
           >
-            Add
-          </button>
-        </form>
-        <ul className="mt-18 flex justify-center gap-4 flex-wrap">
-          {tasks.map((task) => (
-            <li
-              key={task._id}
-              className="bg-green-200 w-[250px] p-3 rounded-lg"
+            <form
+              onSubmit={handleSubmit}
+              onClick={(e) => e.stopPropagation()}
+              className="flex lg:flex-col flex-col gap-3 justify-center mt-6 w-[400px] bg-white h-fit p-2 rounded-md"
             >
-              <span
-                className={`text-lg ${
-                  task.status === "Completed"
-                    ? "line-through text-gray-500"
-                    : ""
-                }`}
+              <div className="flex flex-col gap-2">
+                <input
+                  type="text"
+                  value={formData.title}
+                  onChange={(e) => {
+                    setFormData({ ...formData, title: e.target.value });
+                    if (error) setError("");
+                  }}
+                  className="p-2 flex rounded border border-gray-400 lg:w-full focus:outline-green-500"
+                  placeholder="Title"
+                />
+                {error && (
+                  <p className="text-red-500 text-sm text-center">{error}</p>
+                )}
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <textarea
+                  value={formData.description}
+                  onChange={(e) => {
+                    setFormData({ ...formData, description: e.target.value });
+                    if (error) setError("");
+                  }}
+                  className="p-2 flex rounded border border-gray-400 lg:w-full focus:outline-green-500 resize-none"
+                  rows={4}
+                  placeholder="Description"
+                />
+                {error && (
+                  <p className="text-red-500 text-sm text-center">{error}</p>
+                )}
+              </div>
+
+              <button
+                type="submit"
+                className="px-5 py-2 ml-auto bg-green-400 hover:bg-green-500 text-white rounded cursor-pointer focus:outline-none"
               >
-                {task.title}
-              </span>
+                Add
+              </button>
+            </form>
+          </div>
+        )}
+
+        <ul className="mt-18 flex gap-4 flex-wrap">
+          {tasks.map((task, i) => (
+            <li key={i} className="bg-green-200 w-[250px] h-fit p-3 rounded-lg">
+              <div className="flex flex-col gap-3">
+                <p
+                  className={`text-lg ${
+                    task.status === "Completed"
+                      ? "line-through text-gray-500"
+                      : ""
+                  }`}
+                >
+                  {task.title}
+                </p>
+                <p
+                  onClick={() => toggle(task._id)}
+                  className="text-zinc-700 text-sm"
+                  title={
+                    expanded[task._id] ? "Click to collapse" : "Click to expand"
+                  }
+                >
+                  {expanded[task._id]
+                    ? task.description
+                    : task.description?.length > 50
+                    ? task.description.slice(0, 50) + "..."
+                    : task.description}
+                </p>
+              </div>
               <div className="flex justify-between my-4">
                 <span className="text-sm text-[#414141]">
                   {formatMessageDate(task.createdAt)}

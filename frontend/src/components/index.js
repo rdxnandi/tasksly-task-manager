@@ -1,3 +1,4 @@
+import Sidebar from "./Sidebar/Sidebar";
 import Header from "./Header/Header";
 import Footer from "./Footer/Footer";
 import Layout from "./Layout/Layout";
@@ -8,8 +9,10 @@ import Register from "./Register";
 import Login from "./Login";
 import Input from "./Input";
 import Button from "./Button";
+import Logo from "./Logo";
 
 export {
+  Sidebar,
   Header,
   Footer,
   Layout,
@@ -20,4 +23,5 @@ export {
   Login,
   Input,
   Button,
+  Logo,
 };

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Snackbar, Alert } from "@mui/material";
 
-function NotificationSnackbar({ task }) {
+export default function NotificationSnackbar({ task }) {
   const [visible, setVisible] = useState(false);
 
   // useEffect(() => {
@@ -35,5 +35,3 @@ function NotificationSnackbar({ task }) {
     </Snackbar>
   );
 }
-
-export default NotificationSnackbar;

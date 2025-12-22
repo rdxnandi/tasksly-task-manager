@@ -6,6 +6,9 @@ const taskSchema = new Schema(
       type: String,
       required: [true, "Task title is required"],
     },
+    description: {
+      type: String,
+    },
     status: {
       type: String,
       enum: ["Pending", "Completed"],

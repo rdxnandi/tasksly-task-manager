@@ -21,8 +21,9 @@ export const useTaskStore = create(
       },
 
       fetchTasks: async () => {
-        const res = await axiosInstance.get("/");
-        const tasks = res.data;
+        const res = await axiosInstance.get("/tasks/");
+        const raw = res.data;
+        const tasks = Array.isArray(raw) ? raw : raw?.tasks ?? raw?.data ?? [];
         const completedCount = tasks.filter(
           (t) => t.status === "Completed"
         ).length;
@@ -31,8 +32,9 @@ export const useTaskStore = create(
       },
 
       addTask: async (newTask) => {
-        const res = await axiosInstance.post("/", {
-          title: newTask,
+        const res = await axiosInstance.post("/tasks/", {
+          title: newTask.title,
+          description: newTask.description,
         });
         set((state) => ({
           tasks: [...state.tasks, res.data],

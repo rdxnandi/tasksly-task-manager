@@ -23,8 +23,8 @@ function Dashboard() {
   ];
 
   const upcomingDeadline = [
-    'Task "Deploy Project" - Due in 2 days',
-    'Task "Client Presentation" - Due in 5 days',
+    { title: "Deploy Project", description: "Due in 2 days" },
+    { title: "Client Presentation", description: "Due in 5 days" },
   ];
 
   useEffect(() => {
@@ -66,7 +66,7 @@ function Dashboard() {
         </div>
 
         {/* Recent Activities */}
-        <RecentActivities />
+        {/* <RecentActivities /> */}
       </div>
 
       <div className="flex gap-4 w-full flex-col lg:flex-row mt-6">
@@ -132,7 +132,7 @@ function Dashboard() {
 
         <div className="flex gap-5 lg:w-[70%] w-full">
           {/* Upcoming Deadlines */}
-          <UpcomingDeadline activities={upcomingDeadline} />
+          {/* <UpcomingDeadline activities={upcomingDeadline} /> */}
         </div>
       </div>
 

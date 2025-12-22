@@ -1,89 +1,44 @@
-import { useEffect, useRef, useState } from "react";
-import { Sun, Moon } from "lucide-react";
-import { Link, NavLink } from "react-router-dom";
-import Settings from "../../pages/Settings";
-import { MenuIcon } from "lucide-react";
+import { Bell, ChevronDown, ChevronUp, LogOut, User } from "lucide-react";
+import { useState } from "react";
 
-function Header() {
-  const [isSettingOpen, setIsSettingOpen] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const menuRef = useRef(null);
+export default function Header() {
+  const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setIsMenuOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+  const handleOpen = () => {
+    setOpen(!open);
+  };
 
   return (
-    <>
-      <div className="lg:hidden fixed top-0 bg-white w-full left-0 p-2 z-[100]">
-        <button onClick={() => setIsMenuOpen(true)} className="cursor-pointer">
-          <MenuIcon size={24} />
-        </button>
-      </div>
-
-      <header
-        ref={menuRef}
-        // className="bg-white p-10 mr-5 rounded-2xl w-[300px] hidden lg:flex flex-col justify-between"
-        className={`bg-white p-10 fixed top-0 left-0 min-h-screen z-[100] lg:rounded-2xl lg:mr-5 rounded-r-2xl w-[300px] transform ${
-          isMenuOpen ? "translate-x-0" : "-translate-x-full"
-        } transition-transform duration-300 lg:translate-x-0 lg:static lg:flex lg:flex-col justify-between`}
-      >
-        <nav className="flex flex-col gap-5">
-          <div className="text-2xl font-bold tracking-wider text-green-300 cursor-default border-b border-gray-300 mb-7 pb-5">
-            <Link to="/">Tasksly</Link>
+    <header className="w-full h-[80px] bg-white rounded-2xl">
+      <nav className="w-full h-full flex items-center gap-6 px-6">
+        <div className="ml-auto relative">
+          <div onClick={handleOpen} className="flex items-center gap-4">
+            <User className="border-2 rounded-full size-5" />
+            {!open ? (
+              <ChevronDown className="size-4" />
+            ) : (
+              <ChevronUp className="size-4" />
+            )}
           </div>
 
-          <ul>
-            <li className="mb-4">
-              <NavLink
-                to="/"
-                className={({ isActive }) =>
-                  `text-lg px-4 py-2 rounded-md ${
-                    isActive ? "bg-green-100" : ""
-                  }`
-                }
+          {open && (
+            <div className="w-[120px] absolute top-10 -left-10 bg-zinc-300 rounded-md p-1">
+              <button
+                type="button"
+                className="bg-green-100 tracking-wider w-full flex items-center gap-4 px-4 py-2 rounded-md cursor-pointer focus:outline-none"
               >
-                Dashboard
-              </NavLink>
-            </li>
-            <li className="mb-4">
-              <NavLink
-                to="/tasks"
-                className={({ isActive }) =>
-                  `text-lg px-4 py-2 rounded-md ${
-                    isActive ? "bg-green-100" : ""
-                  }`
-                }
-              >
-                Task
-              </NavLink>
-            </li>
-          </ul>
-        </nav>
+                Logout <LogOut className="size-4" />
+              </button>
+            </div>
+          )}
+        </div>
 
-        <button
-          onClick={() => setIsSettingOpen(true)}
-          className="text-lg tracking-wide cursor-pointer text-left hover:bg-green-100 focus:bg-green-100 w-fit py-2 px-4 rounded-md"
-        >
-          Settings
-        </button>
-      </header>
-
-      <Settings
-        isOpen={isSettingOpen}
-        onClose={() => setIsSettingOpen(false)}
-      />
-    </>
+        {/* Notification */}
+        <div className="relative hover:bg-zinc-100 p-2 rounded-full cursor-pointer">
+          <Bell className="size-5" />
+          <div className="bg-red-500 w-1.5 h-1.5 rounded-full absolute top-2 right-2" />
+        </div>
+      </nav>
+    </header>
   );
 }
-
-export default Header;

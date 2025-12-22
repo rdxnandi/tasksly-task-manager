@@ -1,4 +1,4 @@
-function Footer() {
+export default function Footer() {
   return (
     <footer className="p-4 w-full">
       <p className="text-center font-sans">
@@ -8,5 +8,3 @@ function Footer() {
     </footer>
   );
 }
-
-export default Footer;
