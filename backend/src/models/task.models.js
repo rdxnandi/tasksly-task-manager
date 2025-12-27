@@ -2,6 +2,10 @@ import mongoose, { Schema } from "mongoose";
 
 const taskSchema = new Schema(
   {
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
     title: {
       type: String,
       required: [true, "Task title is required"],
@@ -11,7 +15,7 @@ const taskSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ["Pending", "Completed"],
+      enum: ["Pending", "Completed", "In Progress"],
       default: "Pending",
     },
   },

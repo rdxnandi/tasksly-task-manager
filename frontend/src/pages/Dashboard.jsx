@@ -12,14 +12,25 @@ import {
   UpcomingDeadline,
 } from "../components";
 import { useTaskStore } from "../store/useTaskStore.js";
+import { useAuthStore } from "../store/useAuthStore.js";
 
 function Dashboard() {
-  const { tasks, completedCount, pendingCount, fetchTasks } = useTaskStore();
   const [date, setDate] = useState(dayjs());
 
+  const { userTasks, getTaskByUserId } = useTaskStore();
+  const { authUser } = useAuthStore();
+
   const taskStatusData = [
-    { name: "Completed", value: completedCount, color: "#7bf1a8" },
-    { name: "Pending", value: pendingCount, color: "#05df72" },
+    {
+      name: "Completed",
+      value: userTasks.filter((task) => task.status === "Completed").length,
+      color: "#7bf1a8",
+    },
+    {
+      name: "Pending",
+      value: userTasks.filter((task) => task.status === "Pending").length,
+      color: "#05df72",
+    },
   ];
 
   const upcomingDeadline = [
@@ -28,8 +39,12 @@ function Dashboard() {
   ];
 
   useEffect(() => {
-    fetchTasks();
-  }, [fetchTasks]);
+    if (authUser?.data?._id) {
+      getTaskByUserId(authUser.data._id);
+    }
+  }, [authUser, getTaskByUserId]);
+
+  // console.log(userTasks.filter((task) => task.status === "Completed").length);
 
   return (
     <Layout>
@@ -40,7 +55,7 @@ function Dashboard() {
             <ClipboardList size={20} className="text-gray-500" />
             <div>
               <h3 className="text-gray-600 font-bold text-lg">
-                {tasks.length}
+                {userTasks.length}
               </h3>
               <p>Total Tasks</p>
             </div>
@@ -49,7 +64,7 @@ function Dashboard() {
             <CircleCheck size={20} className="text-gray-500" />
             <div>
               <h3 className="text-gray-600 font-bold text-lg">
-                {completedCount}
+                {userTasks.filter((task) => task.status === "Completed").length}
               </h3>
               <p>Completed Tasks</p>
             </div>
@@ -58,7 +73,7 @@ function Dashboard() {
             <Clock9 size={20} className="text-gray-500" />
             <div>
               <h3 className="text-gray-600 font-bold text-lg">
-                {pendingCount}
+                {userTasks.filter((task) => task.status === "Pending").length}
               </h3>
               <p>Pending Tasks</p>
             </div>
@@ -132,7 +147,7 @@ function Dashboard() {
 
         <div className="flex gap-5 lg:w-[70%] w-full">
           {/* Upcoming Deadlines */}
-          {/* <UpcomingDeadline activities={upcomingDeadline} /> */}
+          <UpcomingDeadline activities={upcomingDeadline} />
         </div>
       </div>
 

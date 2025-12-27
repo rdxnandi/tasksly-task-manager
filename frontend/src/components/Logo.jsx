@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 
+// This is custom logo component
 export default function Logo({ className = "" }) {
   return (
     <div

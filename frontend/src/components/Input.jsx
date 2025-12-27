@@ -1,6 +1,7 @@
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 
+// This is custom input component
 export default function Input({
   label = "",
   Icon,

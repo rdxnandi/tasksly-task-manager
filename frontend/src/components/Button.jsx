@@ -1,3 +1,4 @@
+// This is custom button component
 export default function Button({
   type = "button",
   className = "",

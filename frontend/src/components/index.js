@@ -10,6 +10,8 @@ import Login from "./Login";
 import Input from "./Input";
 import Button from "./Button";
 import Logo from "./Logo";
+import LoadingSpinner from "./LoadingSpinner";
+import TaskCard from "./TaskCard";
 
 export {
   Sidebar,
@@ -24,4 +26,6 @@ export {
   Input,
   Button,
   Logo,
+  LoadingSpinner,
+  TaskCard,
 };

@@ -1,41 +1,54 @@
 import { useEffect, useState } from "react";
-import { Layout } from "../components";
-import { Pencil, Plus, Trash } from "lucide-react";
+import { Layout, TaskCard } from "../components";
+import { Plus } from "lucide-react";
 import { useTaskStore } from "../store/useTaskStore.js";
-import { formatMessageDate, formatMessageTime } from "../lib/utils.js";
+import { useAuthStore } from "../store/useAuthStore.js";
 
 function Tasks() {
-  const [expanded, setExpanded] = useState({});
-
   const [openTaskInput, setOpenTaskInput] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
   });
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState({});
 
-  const { tasks, addTask, deleteTask, fetchTasks, toggleStatus } =
-    useTaskStore();
+  const { userTasks, addTask, getTaskByUserId } = useTaskStore();
 
-  const toggle = (id) => setExpanded((s) => ({ ...s, [id]: !s[id] }));
+  const { authUser } = useAuthStore();
+
+  const validateForm = () => {
+    const newError = {};
+
+    if (!formData.title) {
+      newError.title = "Title is required";
+    } else if (!formData.description) {
+      newError.description = "Description is required";
+    }
+
+    setErrors(newError);
+
+    return true;
+  };
 
   const handleTask = () => {
     setOpenTaskInput(!openTaskInput);
   };
 
   useEffect(() => {
-    fetchTasks();
-  }, [fetchTasks]);
+    if (authUser?.data?._id) {
+      getTaskByUserId(authUser.data._id);
+    }
+  }, [authUser, getTaskByUserId]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // if (!newTask) {
-    //   setError("Task title cannot be blank");
-    //   return;
-    // }
-    addTask(formData);
+
+    const success = validateForm();
+    if (success === true) {
+      addTask(authUser?.data?._id, formData);
+    }
+
     setFormData({ title: "", description: "" });
-    setError("");
   };
 
   return (
@@ -66,13 +79,12 @@ function Tasks() {
                   value={formData.title}
                   onChange={(e) => {
                     setFormData({ ...formData, title: e.target.value });
-                    if (error) setError("");
                   }}
                   className="p-2 flex rounded border border-gray-400 lg:w-full focus:outline-green-500"
                   placeholder="Title"
                 />
-                {error && (
-                  <p className="text-red-500 text-sm text-center">{error}</p>
+                {errors.password && (
+                  <p className="text-red-500 text-sm">{errors.password}</p>
                 )}
               </div>
 
@@ -81,14 +93,13 @@ function Tasks() {
                   value={formData.description}
                   onChange={(e) => {
                     setFormData({ ...formData, description: e.target.value });
-                    if (error) setError("");
                   }}
                   className="p-2 flex rounded border border-gray-400 lg:w-full focus:outline-green-500 resize-none"
                   rows={4}
                   placeholder="Description"
                 />
-                {error && (
-                  <p className="text-red-500 text-sm text-center">{error}</p>
+                {errors.password && (
+                  <p className="text-red-500 text-sm">{errors.password}</p>
                 )}
               </div>
 
@@ -103,62 +114,17 @@ function Tasks() {
         )}
 
         <ul className="mt-18 flex gap-4 flex-wrap">
-          {tasks.map((task, i) => (
-            <li key={i} className="bg-green-200 w-[250px] h-fit p-3 rounded-lg">
-              <div className="flex flex-col gap-3">
-                <p
-                  className={`text-lg ${
-                    task.status === "Completed"
-                      ? "line-through text-gray-500"
-                      : ""
-                  }`}
-                >
-                  {task.title}
-                </p>
-                <p
-                  onClick={() => toggle(task._id)}
-                  className="text-zinc-700 text-sm"
-                  title={
-                    expanded[task._id] ? "Click to collapse" : "Click to expand"
-                  }
-                >
-                  {expanded[task._id]
-                    ? task.description
-                    : task.description?.length > 50
-                    ? task.description.slice(0, 50) + "..."
-                    : task.description}
-                </p>
-              </div>
-              <div className="flex justify-between my-4">
-                <span className="text-sm text-[#414141]">
-                  {formatMessageDate(task.createdAt)}
-                </span>
-                <span className="text-sm text-[#414141]">
-                  {formatMessageTime(task.createdAt)}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <button
-                  onClick={() => toggleStatus(task._id)}
-                  className="focus:outline-none cursor-pointer text-sm"
-                >
-                  {task.status}
-                </button>
-
-                <div className="flex gap-2">
-                  <button className="cursor-pointer bg-yellow-500 hover:bg-yellow-400 text-white p-2 rounded-md focus:outline-none">
-                    <Pencil size={15} />
-                  </button>
-                  <button
-                    className="cursor-pointer bg-red-500 hover:bg-red-600 text-white p-2 rounded-md focus:outline-none"
-                    onClick={() => deleteTask(task._id)}
-                  >
-                    <Trash size={15} />
-                  </button>
-                </div>
-              </div>
-            </li>
-          ))}
+          {Array.isArray(userTasks) &&
+            userTasks.map((task, i) => (
+              <TaskCard
+                key={i}
+                _id={task._id}
+                title={task.title}
+                description={task.description}
+                createdAt={task.createdAt}
+                status={task.status}
+              />
+            ))}
         </ul>
       </div>
     </Layout>

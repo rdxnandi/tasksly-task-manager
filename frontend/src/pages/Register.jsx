@@ -1,7 +1,7 @@
-import { Register } from "../components";
+import { Register as RegisterComponent } from "../components";
 
-const RegisterPage = () => {
-  return <Register />;
+const Register = () => {
+  return <RegisterComponent />;
 };
 
-export default RegisterPage;
+export default Register;
